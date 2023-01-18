@@ -4,7 +4,7 @@
 \alias{wMICE}
 \title{Wrapper of MICE for ImputeBench}
 \usage{
-wMICE(data, args = list(mincor = NULL, m = 5, maxit = 5))
+wMICE(data, args = list(mincor = 0.1, m = 5, maxit = 5))
 }
 \arguments{
 \item{data}{A matrix with numeric entries or \code{NA} entries marking missing entries.}

@@ -16,6 +16,7 @@ analyse_missingness_plots(
   jitter = 0.4,
   alpha_set = 0.25,
   alpha_line = 1,
+  text_size = NULL,
   seed = 1,
   title = NULL,
   thres_name = 0.05,
@@ -48,6 +49,8 @@ Default is \code{TRUE}.}
 \item{alpha_set}{Numeric controlling the alpha/transparency of the data points (or the existing data points). Default is \code{0.25}.}
 
 \item{alpha_line}{Numeric controlling the alpha/transparency of the lines connecting missing and imputed data points. Default is \code{1}.}
+
+\item{text_size}{Numeric or NULL controlling the text label size in tile plots. Default is \code{NULL}.}
 
 \item{seed}{Integer controlling the seed in the jitter of the labels when plotting amount of missing entries per column. Default is \code{1}.}
 

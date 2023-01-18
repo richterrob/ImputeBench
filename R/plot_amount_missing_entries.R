@@ -7,7 +7,7 @@
 #' @param data A matrix with numeric entries or `NA` entries marking missing entries.
 #' @param groups A list of column groups. If provided, the output is given group-wise, rather than variable-wise. Default is `NULL`,
 #' i.e. variable-wise.
-#' @param y.axis A character string, either `"percent"` or `"amount"` controlling the labeling of the y-axis either report
+#' @param y_axis A character string, either `"percent"` or `"amount"` controlling the labeling of the y-axis either report
 #' relative or total amount of missing entries. Default is `"percent"`.
 #' @param thres_name A positive numeric, threshold (percentage of missing entries) whose name of the variables should be displayed?
 #' Only applicable if `groups = NULL`. Default is `0.05`.
@@ -24,15 +24,15 @@
 #' using ggplot2.
 #'
 #' ## Without Column Grouping (`groups = NULL`)
-#' Plotting a point-plot (with jitter in the horizontal direction). Labels and ticks on the y-axis are determined by `y.axis`.
+#' Plotting a point-plot (with jitter in the horizontal direction). Labels and ticks on the y-axis are determined by `y_axis`.
 #' Which variables are labeled is determined by `thres_name`. Jitter can be controlled via the parameters `jitter` and `seed`,
 #' transparency can be controlled via `alpha`. The parameter `type` is discarded.
 #'
 #' ## With Column Grouping
-#' For `type="box"` plotting a box-plot graphic of the distributions of missing values (relative or total depending on `y.axis`) over the
+#' For `type="box"` plotting a box-plot graphic of the distributions of missing values (relative or total depending on `y_axis`) over the
 #' variables of the groups specified in `groups`. For `type="mean"` plotting a point-plot of the mean values of missing values (relative
-#' or total depending on `y.axis`) over the variables of the groups specified in `groups`. For `type="total"` plotting a point-plot of the
-#' total amount of missing entries in each group (not compatible with `y.axis="percent"`). The parameters `jitter`, `alpha`, `thres_name` and
+#' or total depending on `y_axis`) over the variables of the groups specified in `groups`. For `type="total"` plotting a point-plot of the
+#' total amount of missing entries in each group (not compatible with `y_axis="percent"`). The parameters `jitter`, `alpha`, `thres_name` and
 #' `seed` are discarded.
 #'
 #' @return A ggplot2 plot.
@@ -46,14 +46,14 @@ plot_amount_missing_entries = function(data,
                                        jitter = 0.4,
                                        alpha = 1,
                                        seed = NULL,
-                                       y.axis = "percent",# "amount" except for type = "total" where the y.axis is always "amount".
+                                       y_axis = "percent",# "amount" except for type = "total" where the y_axis is always "amount".
                                        type = "box", # c("total", "mean")
                                        title = NULL){
   if(type %in% c("box", "total", "mean")){
-    if(y.axis %in% c("percent","amount")){
+    if(y_axis %in% c("percent","amount")){
 
       if(identical(type, "total")){
-        y.axis = "amount"
+        y_axis = "amount"
       }
       if(is.null(seed)){
         seed = sample(size = 1, x = 1:100000)
@@ -65,7 +65,7 @@ plot_amount_missing_entries = function(data,
                                         title = title,
                                         seed = seed,
                                         error.groups = groups,
-                                        missing.label = y.axis,
+                                        missing.label = y_axis,
                                         first.clms.entry.missing = FALSE,
                                         only.first.mask.missingness = FALSE,
                                         thres_name = thres_name,
@@ -86,7 +86,7 @@ plot_amount_missing_entries = function(data,
         plot = plots$variable
       }
     } else{
-      stop("y.axis must be either 'percent' or 'amount'.")
+      stop("y_axis must be either 'percent' or 'amount'.")
     }
   } else{
     stop("type must be one of 'box', 'mean' or 'total'." )

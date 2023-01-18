@@ -82,9 +82,8 @@ missingness_scenario_from_parameters = function(nbr_columns,
   scenario = list()
 
   if("MCAR" %in% names(missingness_parameters)){
-
     if(is.null(missingness_parameters$MCAR)){
-      scenarios$MCAR = NULL
+      scenario$MCAR = NULL
     } else{
 
       missingness_parameters$MCAR = list( columns = if(is.null(missingness_parameters$MCAR$columns)){ 1:nbr_columns
@@ -103,7 +102,7 @@ missingness_scenario_from_parameters = function(nbr_columns,
   if("MAR" %in% names(missingness_parameters)){
 
     if(is.null(missingness_parameters$MAR)){
-      scenarios$MCAR = NULL
+      scenario$MAR = NULL
     } else{
 
       missingness_parameters$MAR = list( columns = if(is.null(missingness_parameters$MAR$columns)){ 1:nbr_columns
@@ -141,7 +140,7 @@ missingness_scenario_from_parameters = function(nbr_columns,
   if("MNAR" %in% names(missingness_parameters)){
 
     if(is.null(missingness_parameters$MNAR)){
-      scenarios$MCAR = NULL
+      scenario$MNAR = NULL
     } else{
 
       missingness_parameters$MNAR = list( columns = if(is.null(missingness_parameters$MNAR$columns)){ 1:nbr_columns

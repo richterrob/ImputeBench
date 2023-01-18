@@ -49,9 +49,6 @@ plot_3D_simulated_missingness = function(data,
   if(length(clms) != 3){
     stop("Length of clm needs to be exactly 3")
   }
-  if(sum(mask[,clms[1]]) == nrow(mask) ){
-    stop("The first column does not observe missing entries")
-  }
 
   plots = analyse_missingness_plots(data = data,
                                     clms = clms,

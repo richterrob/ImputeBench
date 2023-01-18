@@ -23,20 +23,21 @@ train_KNN = function(data){
   repetitions = 5
   bisection.partition = 10
   bisection.depth = 2
-  default.K = 5
+  default.k = 5
   max.time = 2592000
   #########################################################################
   cblist = determine_count_binary(data)
   only.count.columns = base::setdiff(cblist$count.columns, cblist$binary.columns)
   binary.columns = cblist$binary.columns
   each.trained.k = rep(c(100), repetitions)
-  starting.values = c(1, min(base::ncol(data), maximal.knn))
 
   for(t in 1:repetitions){
     missingness.scenario = missingness_scenario_from_parameters(nbr_columns = ncol(data),
                                                                 missingness_parameters = list("MCAR" = list(columns = 1:ncol(data),
                                                                                                             size = floor(ncol(data)/2),
                                                                                                             probability = 0.2)))
+    discard = FALSE
+    starting.values = c(1, min(base::ncol(data), maximal.knn))
     new.mask = simulate_mask(data = data,
                              scenario = missingness.scenario)
     masked.data = data
@@ -75,21 +76,32 @@ train_KNN = function(data){
         }
         ccc = ccc + 1
       }
-      middle = base::which(bisection == base::min(bisection))
+      middle = base::which(bisection == base::min(bisection, na.rm = TRUE))
+      if(length(middle) == 0){
+        discard = TRUE
+        middle = bisection.partition/2
+      }
       # If middle is a vector, we take the first
       middle = middle[1]
       # NOw we need to update the starting values
       starting.values[1] = evaluation.points[base::max(middle-1,1)]
       starting.values[2] = evaluation.points[base::min(middle+1,bisection.partition)]
     }
-    if(base::min(bisection) == 100){
-      trained.k = default.K
-      warning("KNN was not trained properly, due to error or time out.")
+    if(base::min(bisection, na.rm = TRUE) == 100){
+      each.trained.k[t] = NA
     } else{
-      each.trained.k[t] = evaluation.points[middle]
+      if(discard){
+        each.trained.k[t] = NA
+      } else{
+        each.trained.k[t] = evaluation.points[middle]
+      }
     }
   }
-  trained.k = median(each.trained.k)
+  trained.k = median(each.trained.k, na.rm = TRUE)
+  if(is.na(trained.k)){
+    warning("KNN was not trained properly, due to error or time out.")
+    trained.k = default.k
+  }
   args = list(k = trained.k)
   return(args)
 }

@@ -15,9 +15,12 @@
 #'
 #' @return A numeric matrix without missing entries
 #'
+#' @export
+#'
+
 
 wMICE = function(data,
-                 args = list(mincor = NULL,
+                 args = list(mincor = 0.1,
                              m = 5,
                              maxit = 5)){
   if(!base::is.null(args)){

@@ -9,6 +9,7 @@ plot_2D_data(
   clms = c(1, 2),
   alpha = 0.25,
   jitter = 0.4,
+  text_size = NULL,
   type = "scatter",
   title = NULL
 )
@@ -21,6 +22,8 @@ plot_2D_data(
 \item{alpha}{A positive numeric controlling the transparency of the points. Default is \code{0.25}.}
 
 \item{jitter}{A positive numeric controlling the jitter on the discrete values. Default is \code{0.4}.}
+
+\item{text_size}{Numeric or NULL controlling the text label size in tile plots. Default is \code{NULL}.}
 
 \item{type}{A character string. In the case two discrete variables are selected via \code{clms}, choose between \code{"scatter"} and
 \code{"tile"}. Default is \code{"scatter"}.}

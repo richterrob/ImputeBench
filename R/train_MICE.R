@@ -14,7 +14,7 @@
 
 train_MICE = function(data){
   # Hard-coded parameters:
-  min.correlation = 0.5
+  min.correlation = 0.1
   m = 5
   max.it = 5
   #########################################################################

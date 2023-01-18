@@ -52,11 +52,11 @@ evaluate_imputation_sim = function(data,
     mask.gauss = mask[,only.gauss]
     error.gauss = switch(error_measure,
                          l2 = RMSEscaled_onmask(data = data.gauss,
-                                         imputed_data = imputed_data.gauss,
-                                         scaling_type = "StandardDev",
-                                         reduced.output = TRUE,
-                                         mask = mask.gauss,
-                                         scaling_robust = scaling_robust))
+                                                imputed_data = imputed_data.gauss,
+                                                scaling_type = "StandardDev",
+                                                reduced.output = TRUE,
+                                                mask = mask.gauss,
+                                                scaling_robust = scaling_robust))
   } else{
     error.gauss = NA
   }
@@ -67,11 +67,11 @@ evaluate_imputation_sim = function(data,
     mask.pois = mask[,start.pois:(start.bin - 1)]
     error.pois = switch(error_measure,
                         l2 = RMSEscaled_onmask(data = data.pois,
-                                        imputed_data = imputed_data.pois,
-                                        scaling_type = "StandardDev",
-                                        reduced.output = TRUE,
-                                        mask = mask.pois,
-                                        scaling_robust = scaling_robust))
+                                               imputed_data = imputed_data.pois,
+                                               scaling_type = "StandardDev",
+                                               reduced.output = TRUE,
+                                               mask = mask.pois,
+                                               scaling_robust = scaling_robust))
   } else{
     error.pois = NA
   }
@@ -83,11 +83,11 @@ evaluate_imputation_sim = function(data,
     mask.bin = mask[,start.bin:(start.t - 1)]
     error.binary.mse = switch(error_measure,
                               l2 = RMSEscaled_onmask(data = data.bin,
-                                              imputed_data = imputed_data.bin,
-                                              scaling_type = "StandardDev",
-                                              mask = mask.bin,
-                                              reduced.output = TRUE,
-                                              scaling_robust = scaling_robust))
+                                                     imputed_data = imputed_data.bin,
+                                                     scaling_type = "StandardDev",
+                                                     mask = mask.bin,
+                                                     reduced.output = TRUE,
+                                                     scaling_robust = scaling_robust))
     error.binary.logodds =  log_odds(data = data.bin,
                                      imputed_data = imputed_data.bin,
                                      mask = mask.bin)
@@ -103,11 +103,11 @@ evaluate_imputation_sim = function(data,
     mask.t = mask[,start.t:(start.nonlin - 1)]
     error.t = switch(error_measure,
                      l2 = RMSEscaled_onmask(data = data.t,
-                                     imputed_data = imputed_data.t,
-                                     scaling_type = "StandardDev",
-                                     mask = mask.t,
-                                     reduced.output = TRUE,
-                                     scaling_robust = scaling_robust))
+                                            imputed_data = imputed_data.t,
+                                            scaling_type = "StandardDev",
+                                            mask = mask.t,
+                                            reduced.output = TRUE,
+                                            scaling_robust = scaling_robust))
   } else{
     error.t = NA
   }
@@ -119,11 +119,11 @@ evaluate_imputation_sim = function(data,
     mask.nonlin = mask[,start.nonlin:(start.nonlin + data.grouping[5] - 1)]
     error.sine = switch(error_measure,
                         l2 = RMSEscaled_onmask(data = data.nonlin,
-                                        imputed_data = imputed_data.nonlin,
-                                        scaling_type = "StandardDev",
-                                        mask = mask.nonlin,
-                                        reduced.output = TRUE,
-                                        scaling_robust = scaling_robust))
+                                               imputed_data = imputed_data.nonlin,
+                                               scaling_type = "StandardDev",
+                                               mask = mask.nonlin,
+                                               reduced.output = TRUE,
+                                               scaling_robust = scaling_robust))
   } else{
     error.sine = NA
   }
@@ -135,83 +135,200 @@ evaluate_imputation_sim = function(data,
     mask.spline = mask[,start.spline:(start.spline + data.grouping[6] - 1)]
     error.spline = switch(error_measure,
                           l2 = RMSEscaled_onmask(data = data.spline,
-                                          imputed_data = imputed_data.spline,
-                                          scaling_type = "StandardDev",
-                                          mask = mask.spline,
-                                          reduced.output = TRUE,
-                                          scaling_robust = scaling_robust))
+                                                 imputed_data = imputed_data.spline,
+                                                 scaling_type = "StandardDev",
+                                                 mask = mask.spline,
+                                                 reduced.output = TRUE,
+                                                 scaling_robust = scaling_robust))
   } else{
     error.spline = NA
   }
-  if((data.grouping[1] + data.grouping[4] + data.grouping[5]) != 0){
-    if((data.grouping[4] + data.grouping[5]) != 0){
-      if(data.grouping[4] != 0){
-        data.continuous = data[,c(1:(start.pois-1),start.t:(start.nonlin + data.grouping[5] - 1))]
-      } else{
-        data.continuous = data.nonlin
-      }
-      if(data.grouping[5] == 0){
-        data.continuous = data.t
-      }
-      if((data.grouping[1] != 0) & (data.grouping[4] != 0)){
-        if(data.grouping[5] != 0 ){
-          mask.continuous = cbind(mask.gauss,
-                                  mask.t,
-                                  mask.nonlin)
-          only.continuous = (data.grouping[1] + data.grouping[2] +data.grouping[3] + 1 ):
-            (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5])
-          imputed_data.continuous = base::cbind(imputed_data.gauss,
-                                                imputed_data.t,
-                                                imputed_data.nonlin)
+  if((data.grouping[1] + data.grouping[4] + data.grouping[5] + data.grouping[6]) != 0){
+    if(data.grouping[1] == 0){
+      if(data.grouping[4] == 0){
+        if(data.grouping[5] == 0){
+          mask.continuous = mask.spline
+          data.continuous = data.spline
+          imputed_data.continuous = imputed_data.spline
+          only.continuous = (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5] + 1 ):
+            (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5] + data.grouping[6])
         } else{
-          imputed_data.continuous = base::cbind(imputed_data.gauss,
-                                                imputed_data.t)
-          mask.continuous = base::cbind(mask.gauss,
-                                        mask.t)
-          only.continuous = (data.grouping[1] + data.grouping[2] +data.grouping[3] + 1 ):
-            (data.grouping[1] + data.grouping[2] + data.grouping[3] + data.grouping[4])
+          if(data.grouping[6] == 0){
+            mask.continuous = mask.nonlin
+            data.continuous = data.nonlin
+            imputed_data.continuous = imputed_data.nonlin
+            only.continuous = (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + 1 ):
+              (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5] )
+          } else{
+            mask.continuous = cbind(mask.nonlin,
+                                    mask.spline)
+            data.continuous = cbind(data.nonlin,
+                                    data.spline)
+            only.continuous = (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4]  + 1 ):
+              (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5] + data.grouping[6])
+            imputed_data.continuous = base::cbind(imputed_data.nonlin,
+                                                  imputed_data.spline)
+          }
         }
       } else{
-        if(data.grouping[1] != 0){
-          imputed_data.continuous = base::cbind(imputed_data.gauss,
-                                                imputed_data.nonlin)
-          mask.continuous = cbind(mask.gauss,
-                                  mask.nonlin)
-          only.continuous = (data.grouping[1] + data.grouping[2] + data.grouping[3] + 1 ):
-            (data.grouping[1] + data.grouping[2] +data.grouping[3]  + data.grouping[5])
-        } else{
-          if(data.grouping[4] != 0){
+        if(data.grouping[5] == 0){
+          if(data.grouping[6] == 0){
+            mask.continuous = mask.t
+            data.continuous = data.t
+            imputed_data.continuous = imputed_data.t
+            only.continuous = (data.grouping[1] + data.grouping[2] +data.grouping[3] + 1 ):
+              (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4])
+          } else{
+            mask.continuous = cbind(mask.t,
+                                    mask.spline)
+            data.continuous = cbind(data.t,
+                                    data.spline)
+            only.continuous = c((data.grouping[1] + data.grouping[2] + data.grouping[3] + 1 ):
+                                  (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4]),
+                                (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5] + 1 ):
+                                  (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5] + data.grouping[6]))
             imputed_data.continuous = base::cbind(imputed_data.t,
-                                                  imputed_data.nonlin)
+                                                  imputed_data.spline)
+          }
+        } else{
+          if(data.grouping[6] == 0){
             mask.continuous = cbind(mask.t,
                                     mask.nonlin)
-            only.continuous = (data.grouping[1] + data.grouping[2] +data.grouping[3] + 1 ):
+            data.continuous = cbind(data.t,
+                                    data.nonlin)
+            only.continuous = (data.grouping[1] + data.grouping[2] + data.grouping[3] + 1 ):
               (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5])
-
+            imputed_data.continuous = base::cbind(imputed_data.t,
+                                                  imputed_data.nonlin)
           } else{
-            imputed_data.continuous = imputed_data.nonlin
-            mask.continuous = mask.nonlin
-            only.continuous = (data.grouping[1] + data.grouping[2] +data.grouping[3] + 1 ):
-              (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5])
+            mask.continuous = cbind(mask.t,
+                                    mask.nonlin,
+                                    mask.spline)
+            data.continuous = cbind(data.t,
+                                    data.nonlin,
+                                    data.spline)
+            only.continuous = (data.grouping[1] + data.grouping[2] + data.grouping[3] + 1 ):
+              (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5] + data.grouping[6])
+            imputed_data.continuous = base::cbind(imputed_data.t,
+                                                  imputed_data.nonlin,
+                                                  imputed_data.spline)
           }
         }
       }
-      if(data.grouping[1] != 0){
-        only.continuous = c( 1:data.grouping[1], only.continuous)
-      }
     } else{
-      only.continuous = 1:data.grouping[1]
-      data.continuous = data.gauss
-      imputed_data.continuous = imputed_data.gauss
-      mask.continuous = mask.gauss
+      if(data.grouping[4] == 0){
+        if(data.grouping[5] == 0){
+          if(data.grouping[6] == 0){
+            mask.continuous = mask.gauss
+            data.continuous = data.gauss
+            imputed_data.continuous = imputed_data.gauss
+            only.continuous = (1 : data.grouping[1])
+          } else{
+            mask.continuous = cbind(mask.gauss,
+                                    mask.spline)
+            data.continuous = cbind(data.gauss,
+                                    data.spline)
+            only.continuous = c(1: data.grouping[1],
+                                (data.grouping[1] + data.grouping[2] + data.grouping[3] + data.grouping[4] + data.grouping[5] + 1 ):
+                                  (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5] + data.grouping[6]))
+            imputed_data.continuous = base::cbind(imputed_data.gauss,
+                                                  imputed_data.spline)
+          }
+        } else{
+          if(data.grouping[6] == 0){
+            mask.continuous = cbind(mask.gauss,
+                                    mask.nonlin)
+            data.continuous = cbind(data.gauss,
+                                    data.nonlin)
+            only.continuous = c(1: data.grouping[1],
+                                (data.grouping[1] + data.grouping[2] + data.grouping[3] + data.grouping[4] + + 1 ):
+                                  (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5]))
+            imputed_data.continuous = base::cbind(imputed_data.gauss,
+                                                  imputed_data.nonlin)
+          } else{
+            mask.continuous = cbind(mask.gauss,
+                                    mask.nonlin,
+                                    mask.spline)
+            data.continuous = cbind(data.gauss,
+                                    data.nonlin,
+                                    data.spline)
+            only.continuous = c(1: data.grouping[1],
+                                (data.grouping[1] + data.grouping[2] + data.grouping[3] + data.grouping[4] + 1 ):
+                                  (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5] + data.grouping[6]))
+            imputed_data.continuous = base::cbind(imputed_data.gauss,
+                                                  imputed_data.nonlin,
+                                                  imputed_data.spline)
+          }
+        }
+      } else{
+        if(data.grouping[5] == 0){
+          if(data.grouping[6] == 0){
+            mask.continuous = cbind(mask.gauss,
+                                    mask.t)
+            data.continuous = cbind(data.gauss,
+                                    data.t)
+            only.continuous = c(1: data.grouping[1],
+                                (data.grouping[1] + data.grouping[2] + data.grouping[3] + 1 ):
+                                  (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4]))
+            imputed_data.continuous = base::cbind(imputed_data.gauss,
+                                                  imputed_data.t)
+          } else{
+            mask.continuous = cbind(mask.gauss,
+                                    mask.t,
+                                    mask.spline)
+            data.continuous = cbind(data.gauss,
+                                    data.t,
+                                    data.spline)
+            only.continuous = c(1: data.grouping[1],
+                                (data.grouping[1] + data.grouping[2] + data.grouping[3] + 1 ):
+                                  (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4]),
+                                (data.grouping[1] + data.grouping[2] + data.grouping[3] + data.grouping[4] + data.grouping[5] + 1 ):
+                                  (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5] + data.grouping[6]))
+            imputed_data.continuous = base::cbind(imputed_data.gauss,
+                                                  imputed_data.t,
+                                                  imputed_data.spline)
+          }
+        } else{
+          if(data.grouping[6] == 0){
+            mask.continuous = cbind(mask.gauss,
+                                    mask.t,
+                                    mask.nonlin)
+            data.continuous = cbind(data.gauss,
+                                    data.t,
+                                    data.nonlin)
+            only.continuous = c(1: data.grouping[1],
+                                (data.grouping[1] + data.grouping[2] + data.grouping[3] + 1 ):
+                                  (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5]))
+            imputed_data.continuous = base::cbind(imputed_data.gauss,
+                                                  imputed_data.t,
+                                                  imputed_data.nonlin)
+          } else{
+            mask.continuous = cbind(mask.gauss,
+                                    mask.t,
+                                    mask.nonlin,
+                                    mask.spline)
+            data.continuous = cbind(data.gauss,
+                                    data.t,
+                                    data.nonlin,
+                                    data.spline)
+            only.continuous = c(1: data.grouping[1],
+                                (data.grouping[1] + data.grouping[2] + data.grouping[3] + 1 ):
+                                  (data.grouping[1] + data.grouping[2] +data.grouping[3] + data.grouping[4] + data.grouping[5] + data.grouping[6]))
+            imputed_data.continuous = base::cbind(imputed_data.gauss,
+                                                  imputed_data.t,
+                                                  imputed_data.nonlin,
+                                                  imputed_data.spline)
+          }
+        }
+      }
     }
     error.continuous = switch(error_measure,
                               l2 = RMSEscaled_onmask(data = data.continuous,
-                                              imputed_data = imputed_data.continuous,
-                                              scaling_type = "StandardDev",
-                                              mask = mask.continuous,
-                                              reduced.output = TRUE,
-                                              scaling_robust = scaling_robust))
+                                                     imputed_data = imputed_data.continuous,
+                                                     scaling_type = "StandardDev",
+                                                     mask = mask.continuous,
+                                                     reduced.output = TRUE,
+                                                     scaling_robust = scaling_robust))
   } else{
     error.continuous = NA
   }

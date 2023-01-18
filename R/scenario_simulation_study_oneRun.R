@@ -23,6 +23,8 @@
 #' @param retrain.always Boolean, should parameters for each imputation method be learned for every run or only every scenario/parameter choice?
 #' Default is \code{FALSE}.
 #' @param verbose Boolean, determines if an output to the console is made each time a run is finished. Default is \code{FALSE}.
+#' @param only_miss_par_provided Boolean, if `TRUE` the algorithm assumes each list entry of `scenario` to be a list of scenarios of
+#' lenght `repetitions`, for each run one. Default is `FALSE`.
 #' @param seed Integer or `NULL`, sets a seed. Default is \code{NULL}.
 #' @param run.nbr Integer indicating the number of run in the simulation study. Default is \code{1}.
 #' @param max.time The maximal amount of seconds an imputation method is allowed to take. Default is \code{2592000}, i.e. 30 days.
@@ -47,6 +49,7 @@ scenario_simulation_study_oneRun = function(data,
                                             scaling_robust = 0.01,
                                             retrain.always = FALSE,
                                             verbose = FALSE,
+                                            only_miss_par_provided = FALSE,
                                             seed = NULL,
                                             run.nbr = 1,
                                             max.time = 2592000,
@@ -70,8 +73,11 @@ scenario_simulation_study_oneRun = function(data,
 
   for(k in 1:repetitions){
     # k = 1
+    if(only_miss_par_provided){
+      scenario_run = scenario[[k]]
+    }
     if(!is.null(seed)){
-    seed = seed + (1000*k)
+      seed = seed + (1000*k)
     }
     if(verbose){
       base::print(base::paste("Starting run ", k, " of ", repetitions, " for Scenario ", run.nbr, sep = ""))
@@ -82,9 +88,15 @@ scenario_simulation_study_oneRun = function(data,
     counts = counts.and.binaries$count.columns
     binaries = counts.and.binaries$binary.columns
     # We need to draw a missingness pattern on the data
-    mask.mtrx = simulate_mask(data = data.mtrx,
-                              scenario = scenario,
-                              seed = seed)
+    if(only_miss_par_provided){
+      mask.mtrx = simulate_mask(data = data.mtrx,
+                                scenario = scenario_run,
+                                seed = seed)
+    } else{
+      mask.mtrx = simulate_mask(data = data.mtrx,
+                                scenario = scenario,
+                                seed = seed)
+    }
 
     masked.data.mtrx = data.mtrx
     for(clmn in 1:base::ncol(data.mtrx)){
@@ -94,19 +106,19 @@ scenario_simulation_study_oneRun = function(data,
     # We need to train the imputation parameters
     if(k == 1){
       method_arguments = imputation_training(masked.data = masked.data.mtrx,
-                                            methods = methods,
-                                            training = training)
+                                             methods = methods,
+                                             training = training)
     } else{
       if(retrain.always){
         method_arguments = imputation_training(masked.data = masked.data.mtrx,
-                                              methods = methods,
-                                              training = training)
+                                               methods = methods,
+                                               training = training)
       }
     }
     if(output_data){
-    data.list[[k]] = list(ID = base::paste(base::as.character(run.nbr), base::as.character(k), sep = "."),
-                          mask = mask.mtrx,
-                          args = method_arguments)
+      data.list[[k]] = list(ID = base::paste(base::as.character(run.nbr), base::as.character(k), sep = "."),
+                            mask = mask.mtrx,
+                            args = method_arguments)
     }
     # Given the method arguments we now need the imputed matrices
     imputation.results = imputation_wrapper(data = masked.data.mtrx,
@@ -157,8 +169,8 @@ scenario_simulation_study_oneRun = function(data,
     }
   }
   if(output_data){
-  Results = list(evaluation = evaluation,
-                 data.list = data.list)
+    Results = list(evaluation = evaluation,
+                   data.list = data.list)
   } else{
     Results = evaluation
   }

@@ -12,7 +12,9 @@ plot_ImputeBench(
   y_axis = NULL,
   norm_by_baseline = TRUE,
   color_axis_labels = NULL,
-  error_type = "overall"
+  error_type = "overall",
+  ylim_top = NA,
+  ylim_bottom = NA
 )
 }
 \arguments{
@@ -39,6 +41,10 @@ imputation method error) is reported. Default is \code{TRUE}.}
 If \code{error_type = "overall"} the usual error is plotted, if one of the following \code{"gauss"}, \code{"pois"}, \code{"binary.mse"},
 \code{"binary.log.odds"}, \code{"t"}, \code{"sine"}, \code{"spline"} or \code{"continuous"} is passed via \code{error_type} the errors on the respective
 data types are plotted. Default is \code{"overall"}.}
+
+\item{ylim_top}{A positive numeric. The top limit of the box-plot. Default is \code{NA}.}
+
+\item{ylim_bottom}{A positive numeric. The bottom limit of the box-plot. Default is \code{NA}.}
 }
 \value{
 A ggplot2 plot.

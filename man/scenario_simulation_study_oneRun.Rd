@@ -17,6 +17,7 @@ scenario_simulation_study_oneRun(
   scaling_robust = 0.01,
   retrain.always = FALSE,
   verbose = FALSE,
+  only_miss_par_provided = FALSE,
   seed = NULL,
   run.nbr = 1,
   max.time = 2592000,
@@ -54,6 +55,9 @@ when computing the imputation error. Default is \code{0.01}.}
 Default is \code{FALSE}.}
 
 \item{verbose}{Boolean, determines if an output to the console is made each time a run is finished. Default is \code{FALSE}.}
+
+\item{only_miss_par_provided}{Boolean, if \code{TRUE} the algorithm assumes each list entry of \code{scenario} to be a list of scenarios of
+lenght \code{repetitions}, for each run one. Default is \code{FALSE}.}
 
 \item{seed}{Integer or \code{NULL}, sets a seed. Default is \code{NULL}.}
 

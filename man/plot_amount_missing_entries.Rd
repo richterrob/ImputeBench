@@ -11,7 +11,7 @@ plot_amount_missing_entries(
   jitter = 0.4,
   alpha = 1,
   seed = NULL,
-  y.axis = "percent",
+  y_axis = "percent",
   type = "box",
   title = NULL
 )
@@ -33,7 +33,7 @@ is 1.}
 
 \item{seed}{An integer to fix a seed of the jitter. ONly applicable if \code{groups = NULL}. Default is \code{NULL}.}
 
-\item{y.axis}{A character string, either \code{"percent"} or \code{"amount"} controlling the labeling of the y-axis either report
+\item{y_axis}{A character string, either \code{"percent"} or \code{"amount"} controlling the labeling of the y-axis either report
 relative or total amount of missing entries. Default is \code{"percent"}.}
 
 \item{type}{A character string, one of the following: \code{"box"}, \code{"total"} and \code{"mean"}, controlling the type of plot.
@@ -52,17 +52,17 @@ Plotting the relative/total amount of missing entries in each column/variable of
 using ggplot2.
 \subsection{Without Column Grouping (\code{groups = NULL})}{
 
-Plotting a point-plot (with jitter in the horizontal direction). Labels and ticks on the y-axis are determined by \code{y.axis}.
+Plotting a point-plot (with jitter in the horizontal direction). Labels and ticks on the y-axis are determined by \code{y_axis}.
 Which variables are labeled is determined by \code{thres_name}. Jitter can be controlled via the parameters \code{jitter} and \code{seed},
 transparency can be controlled via \code{alpha}. The parameter \code{type} is discarded.
 }
 
 \subsection{With Column Grouping}{
 
-For \code{type="box"} plotting a box-plot graphic of the distributions of missing values (relative or total depending on \code{y.axis}) over the
+For \code{type="box"} plotting a box-plot graphic of the distributions of missing values (relative or total depending on \code{y_axis}) over the
 variables of the groups specified in \code{groups}. For \code{type="mean"} plotting a point-plot of the mean values of missing values (relative
-or total depending on \code{y.axis}) over the variables of the groups specified in \code{groups}. For \code{type="total"} plotting a point-plot of the
-total amount of missing entries in each group (not compatible with \code{y.axis="percent"}). The parameters \code{jitter}, \code{alpha}, \code{thres_name} and
+or total depending on \code{y_axis}) over the variables of the groups specified in \code{groups}. For \code{type="total"} plotting a point-plot of the
+total amount of missing entries in each group (not compatible with \code{y_axis="percent"}). The parameters \code{jitter}, \code{alpha}, \code{thres_name} and
 \code{seed} are discarded.
 }
 }
