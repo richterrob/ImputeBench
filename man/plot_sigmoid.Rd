@@ -7,7 +7,8 @@
 plot_sigmoid(
   probability.upper = 0.8,
   probability.lower = 0.2,
-  probability.midpoint = c(0.5, 0.5)
+  probability.midpoint = c(0.5, 0.5),
+  x_lab = "Value"
 )
 }
 \arguments{
@@ -15,7 +16,9 @@ plot_sigmoid(
 
 \item{probability.lower}{A numeric between 0 and 1. Default is \code{0.2}.}
 
-\item{probability.midpoint}{A numeric vector with entries between 0 and 1. Default is \code{c(0.5,0.5)}}
+\item{probability.midpoint}{A numeric vector with entries between 0 and 1. Default is \code{c(0.5,0.5)}.}
+
+\item{x_lab}{A character String. Changing the x-axis label. Default is \code{"Value"}.}
 }
 \value{
 Outputs a plot of the piecewise-sigmoid function.

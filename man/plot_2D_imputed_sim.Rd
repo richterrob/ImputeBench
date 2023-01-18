@@ -11,6 +11,7 @@ plot_2D_imputed_sim(
   alpha = 0.25,
   jitter = 0.4,
   alpha_line = 1,
+  text_size = NULL,
   clms = c(1, 2),
   type = "scatter",
   title = NULL
@@ -30,6 +31,8 @@ imputed matrix is compared against the ground truth matrix.}
 
 \item{alpha_line}{A postive numeric controlling the transparency of the lines connecting missing and imputed values.
 Default is \code{1}.}
+
+\item{text_size}{Numeric or NULL controlling the text label size in tile plots. Default is \code{NULL}.}
 
 \item{clms}{An integer vector, indicating the columns to be plotted. Default is \code{c(1,2)}.}
 
