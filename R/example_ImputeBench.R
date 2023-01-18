@@ -53,29 +53,31 @@ example_ImputeBench = function(Evaluation, parameters = 1, run = 1, data = NULL,
   miss.vec[which(miss.mask == 0)] =  NA
   miss.data = matrix(miss.vec, ncol = ncol(data))
 
+  # results$data.list[[2]][[1]]$args[[4]]
+
   if(!is.null(imputation_methods)){
     args = Evaluation$data.list[[parameters + 1]][[run]]$args
     imputed_data = list()
 
     if("softImpute" %in% imputation_methods){
       imputed_data$softImpute = wsImpute(data = miss.data,
-                                         args = args[[imputation_indices[which(imputation_methods) == "softImpute"]]])
+                                         args = args[[imputation_indices[which(imputation_methods == "softImpute")]]])
     }
     if("baseline" %in% imputation_methods){
       imputed_data$median = baseline_imputation(data = miss.data,
-                                                args = args[[imputation_indices[which(imputation_methods) == "baseline"]]])
+                                                args = args[[imputation_indices[which(imputation_methods == "baseline")]]])
     }
     if("knn" %in% imputation_methods){
       imputed_data$knn = wKNN(data = miss.data,
-                              args = args[[imputation_indices[which(imputation_methods) == "knn"]]])
+                              args = args[[imputation_indices[which(imputation_methods == "knn")]]])
     }
     if("missF" %in% imputation_methods){
       imputed_data$missF = wmissF(data = miss.data,
-                                  args = args[[imputation_indices[which(imputation_methods) == "missF"]]])
+                                  args = args[[imputation_indices[which(imputation_methods == "missF")]]])
     }
     if("MICE" %in% imputation_methods){
       imputed_data$MICE = wMICE(data = miss.data,
-                                args = args[[imputation_indices[which(imputation_methods) == "MICE"]]])
+                                args = args[[imputation_indices[which(imputation_methods == "MICE")]]])
     }
   }
 

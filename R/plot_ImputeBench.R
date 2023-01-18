@@ -34,6 +34,9 @@
 #' @export
 #'
 
+
+
+
 plot_ImputeBench = function(Evaluation,
                             title = "Imputation Performance",
                             group = NULL,
@@ -113,7 +116,7 @@ plot_ImputeBench = function(Evaluation,
     if(normed){
     if("parameters.name" %in% names(Evaluation)){
       df$descriptor = factor(Evaluation$parameters.name[which((1:nrow(Evaluation) %% nbr.competing) != 0)],
-                             levels = paste0("Parameters_",1:nbr.settings))
+                             levels = unique(Evaluation$parameters.name))
       xAxis.name = "Parameter Choice"
     } else{
       df$descriptor = factor(Evaluation$scenario[which((1:nrow(Evaluation) %% nbr.competing) != 0)],
