@@ -15,6 +15,7 @@
 #' @param jitter Numeric controlling the jitter added to count variables. Default is `0.4`.
 #' @param alpha_set Numeric controlling the alpha/transparency of the data points (or the existing data points). Default is `0.25`.
 #' @param alpha_line Numeric controlling the alpha/transparency of the lines connecting missing and imputed data points. Default is `1`.
+#' @param text_size Numeric or NULL controlling the text label size in tile plots. Default is `NULL`.
 #' @param seed Integer controlling the seed in the jitter of the labels when plotting amount of missing entries per column. Default is `1`.
 #' @param thres_name Numeric controlling the threshold over which labels of the column names should be plotted when plotting amount of
 #' of missing entires per column. Default is `0.05`.
@@ -48,6 +49,7 @@ analyse_missingness_plots = function(data,
                                      jitter = 0.4,
                                      alpha_set = 0.25,
                                      alpha_line = 1,
+                                     text_size = NULL,
                                      seed = 1,
                                      title = NULL,
                                      thres_name = 0.05,
@@ -61,6 +63,8 @@ analyse_missingness_plots = function(data,
   missboth = NULL;  impx = NULL;  imputed = NULL;  imputation = NULLvalueimp = NULL;  valuemiss = NULL;  valueimp = NULL
   impy = NULL;  valueimp = NULL;  grp = NULL; imp = NULL
 
+  count.levels = 30 # Maximum numver of values for "count columns"
+
   data = as.data.frame(data)
 
   n = base::nrow(data)
@@ -69,7 +73,7 @@ analyse_missingness_plots = function(data,
   count.clms = count.binary[[1]]
   length.un.fun = function(x){length(unique(x))}
   how.many.levels = apply(data[,count.clms], MARGIN = 2 , FUN = length.un.fun)
-  count.clms = count.clms[which(how.many.levels <= 15)]
+  count.clms = count.clms[which(how.many.levels <= count.levels)]
   cont.clms = setdiff(1:p, count.clms)
 
 
@@ -144,9 +148,6 @@ analyse_missingness_plots = function(data,
         }
       }
       # View(nbr.missing)
-
-
-      #which_list(15, error.groups)
 
       group.labels = unlist(sapply(1:p, FUN = function(x){return(which_list(x,error.groups))}))
 
@@ -554,7 +555,7 @@ analyse_missingness_plots = function(data,
               ggplot2::labs(title = title,
                             x = data.names[1],
                             y = data.names[2]) +
-              ggplot2::geom_text(ggplot2::aes(label = value), size = 5, col = "white")
+              ggplot2::geom_text(ggplot2::aes(label = value), size = if(is.null(text_size)){5} else{text_size}, col = "white")
 
           }
 
@@ -1898,9 +1899,9 @@ analyse_missingness_plots = function(data,
                           y = data.names[2],
                           fill = "Relative Change") +
             ggplot2::scale_fill_gradient2() +
-            ggplot2::geom_text(ggplot2::aes(label = valuemiss), size = ((0.25*(10 - vtk.vls)) + 3), col = "black",
+            ggplot2::geom_text(ggplot2::aes(label = valuemiss), size = if(is.null(text_size)){(0.25*(10 - vtk.vls)) + 3} else{text_size}, col = "black",
                                vjust = 1.2) +
-            ggplot2::geom_text(ggplot2::aes(label = valueimp), size = ((0.25*(10 - vtk.vls)) + 3), col = "red",
+            ggplot2::geom_text(ggplot2::aes(label = valueimp), size = if(is.null(text_size)){(0.25*(10 - vtk.vls)) + 3} else{text_size}, col = "red",
                                vjust = -0.5)
 
         }

@@ -20,6 +20,8 @@
 #' If `error_type = "overall"` the usual error is plotted, if one of the following `"gauss"`, `"pois"`, `"binary.mse"`,
 #' `"binary.log.odds"`, `"t"`, `"sine"`, `"spline"` or `"continuous"` is passed via `error_type` the errors on the respective
 #' data types are plotted. Default is `"overall"`.
+#' @param ylim_top A positive numeric. The top limit of the box-plot. Default is `NA`.
+#' @param ylim_bottom A positive numeric. The bottom limit of the box-plot. Default is `NA`.
 #'
 #' @details This function plots a boxplot over the different missingness scenarios or data/missingness parameter choices reporting
 #' on the y-axis the imputation error of all imputation methods compared which are distinguished by color.
@@ -39,7 +41,9 @@ plot_ImputeBench = function(Evaluation,
                             y_axis = NULL,
                             norm_by_baseline = TRUE,
                             color_axis_labels = NULL,
-                            error_type = "overall"){
+                            error_type = "overall",
+                            ylim_top = NA,
+                            ylim_bottom = NA){
 
   # Get rid of notes:
   descriptor = NULL; error = NULL; Method = NULL
@@ -104,13 +108,16 @@ plot_ImputeBench = function(Evaluation,
                              & Evaluation$Run == df$Run[k], error.clm]
   }
 
+
   if(base::is.null(x_axis)){
     if(normed){
     if("parameters.name" %in% names(Evaluation)){
-      df$descriptor = as.factor(Evaluation$parameters.name[which((1:nrow(Evaluation) %% nbr.competing) != 0)])
+      df$descriptor = factor(Evaluation$parameters.name[which((1:nrow(Evaluation) %% nbr.competing) != 0)],
+                             levels = paste0("Parameters_",1:nbr.settings))
       xAxis.name = "Parameter Choice"
     } else{
-      df$descriptor = as.factor(Evaluation$scenario[which((1:nrow(Evaluation) %% nbr.competing) != 0)])
+      df$descriptor = factor(Evaluation$scenario[which((1:nrow(Evaluation) %% nbr.competing) != 0)],
+                             levels = unique(Evaluation$scenario))
       xAxis.name = "Scenario"
     }
     } else{
@@ -153,7 +160,7 @@ plot_ImputeBench = function(Evaluation,
                            "size_MAR" = Evaluation$mask.MAR.columns[Evaluation$Setting == df$Setting[k]
                                                                     & Evaluation$method == df$Method[k]
                                                                     & Evaluation$Run == df$Run[k]],
-                           "size_MNAR" = Evaluation$mask.MMAR.columns[Evaluation$Setting == df$Setting[k]
+                           "size_MNAR" = Evaluation$mask.MNAR.columns[Evaluation$Setting == df$Setting[k]
                                                                       & Evaluation$method == df$Method[k]
                                                                       & Evaluation$Run == df$Run[k]],
                            "probability_MCAR" = Evaluation$mask.MCAR.probability[Evaluation$Setting == df$Setting[k]
@@ -221,7 +228,8 @@ plot_ImputeBench = function(Evaluation,
       ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 0.5, vjust = 0.5)) +
       ggplot2::labs(title = title,
                     y = yAxis.name,
-                    x = xAxis.name)
+                    x = xAxis.name) +
+      ggplot2::scale_y_continuous(limits = c(ylim_bottom,ylim_top))
     if(normed){
       plot = plot + ggplot2::geom_hline(yintercept = 1 , color = "black")
     }
@@ -230,7 +238,8 @@ plot_ImputeBench = function(Evaluation,
     plot = ggplot2::ggplot(data = df) +
       ggplot2::geom_boxplot(ggplot2::aes(x = as.factor(descriptor), y = error, color = Method)) +
       ggplot2::theme_bw() +
-      ggplot2::scale_y_continuous(trans = "log") +
+      ggplot2::scale_y_continuous(trans = "log",
+                                  limits = c(ylim_bottom, ylim_top)) +
       ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 0.5, vjust = 0.5)) +
       ggplot2::labs(title = title,
                     y = yAxis.name,

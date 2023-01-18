@@ -215,6 +215,7 @@
 #'
 #' @export
 #'
+#'
 
 
 
@@ -317,70 +318,76 @@ simulation_ImputeBench = function(methods = NULL,
     }
     for(k in 1:length(missingness_parameters)){
       miss.p = missingness_parameters[[k]]
-      if((!is.null(miss.p$MCAR) & !is.null(miss.p$MCAR$columns) )  & !is.vector(miss.p$MCAR$columns) ){
-        stop("MCAR$columns is not a vector.")
-      }
-      if((!is.null(miss.p$MCAR) & !is.null(miss.p$MCAR$size) )  & (miss.p$MCAR$size != round(miss.p$MCAR$size)) ){
-        stop("MCAR$size is not an integer")
-      }
-      if(!is.null(miss.p$MCAR) & !is.null(miss.p$MCAR$probability)){
-        if((!is.numeric(miss.p$MCAR$probability) |miss.p$MCAR$probability < 0) | miss.p$MCAR$probability > 1){
-          stop("MCAR$probability is not a numeric between 0 and 1.")
+      if(!is.null(miss.p$MCAR)){
+        if(( !is.null(miss.p$MCAR$columns) )  & !is.vector(miss.p$MCAR$columns) ){
+          stop("MCAR$columns is not a vector.")
+        }
+        if(( !is.null(miss.p$MCAR$size) )  & (miss.p$MCAR$size != round(miss.p$MCAR$size)) ){
+          stop("MCAR$size is not an integer")
+        }
+        if( !is.null(miss.p$MCAR$probability)){
+          if((!is.numeric(miss.p$MCAR$probability) |miss.p$MCAR$probability < 0) | miss.p$MCAR$probability > 1){
+            stop("MCAR$probability is not a numeric between 0 and 1.")
+          }
         }
       }
-      if((!is.null(miss.p$MAR) & !is.null(miss.p$MAR$columns) )  & !is.vector(miss.p$MAR$columns) ){
-        stop("MAR$columns is not a vector.")
-      }
-      if((!is.null(miss.p$MAR) & !is.null(miss.p$MAR$size.regressors) )  & !is.vector(miss.p$MAR$size.regressors) ){
-        stop("MAR$size.regressors is not a vector.")
-      }
-      if((!is.null(miss.p$MAR) & !is.null(miss.p$MAR$size) )  & (miss.p$MAR$size != round(miss.p$MAR$size)) ){
-        stop("MAR$size is not an integer")
-      }
-      if(!is.null(miss.p$MAR) & !is.null(miss.p$MAR$probability.upper) ){
-        if( ((!is.numeric(miss.p$MAR$probability.upper) | miss.p$MAR$probability.upper < 0) | miss.p$MAR$probability.upper > 1)){
-          stop("MAR$probability.upper is not a numeric between 0 and 1.")
+      if(!is.null(miss.p$MAR)){
+        if(( !is.null(miss.p$MAR$columns) )  & !is.vector(miss.p$MAR$columns) ){
+          stop("MAR$columns is not a vector.")
+        }
+        if((!is.null(miss.p$MAR$size.regressors) )  & !is.vector(miss.p$MAR$size.regressors) ){
+          stop("MAR$size.regressors is not a vector.")
+        }
+        if((!is.null(miss.p$MAR$size) )  & (miss.p$MAR$size != round(miss.p$MAR$size)) ){
+          stop("MAR$size is not an integer")
+        }
+        if( !is.null(miss.p$MAR$probability.upper) ){
+          if( ((!is.numeric(miss.p$MAR$probability.upper) | miss.p$MAR$probability.upper < 0) | miss.p$MAR$probability.upper > 1)){
+            stop("MAR$probability.upper is not a numeric between 0 and 1.")
+          }
+        }
+        if( !is.null(miss.p$MAR$probability.lower) ){
+          if((!is.numeric(miss.p$MAR$probability.lower) |  miss.p$MAR$probability.lower < 0) | miss.p$MAR$probability.lower > 1){
+            stop("MAR$probability.lower is not a numeric between 0 and 1.")
+          }
+        }
+        if(!is.null(miss.p$MAR$probability.midpoint) ){
+          if((!is.numeric(miss.p$MAR$probability.midpoint[1]) | miss.p$MAR$probability.midpoint[1] < 0) | miss.p$MAR$probability.midpoint[1] > 1){
+            stop("MAR$probability.midpoint[1] is not a numeric between 0 and 1.")
+          }
+        }
+        if(!is.null(miss.p$MAR$probability.midpoint)){
+          if((!is.numeric(miss.p$MAR$probability.midpoint[2]) |miss.p$MAR$probability.midpoint[2] < 0) | miss.p$MAR$probability.midpoint[2] > 1){
+            stop("MAR$probability.midpoint[2] is not a numeric between 0 and 1.")
+          }
         }
       }
-      if(!is.null(miss.p$MAR) & !is.null(miss.p$MAR$probability.lower) ){
-        if((!is.numeric(miss.p$MAR$probability.lower) |  miss.p$MAR$probability.lower < 0) | miss.p$MAR$probability.lower > 1){
-          stop("MAR$probability.lower is not a numeric between 0 and 1.")
+      if(!is.null(miss.p$MNAR)){
+        if((!is.null(miss.p$MNAR$columns) )  & !is.vector(miss.p$MNAR$columns) ){
+          stop("MNAR$columns is not a vector.")
         }
-      }
-      if(!is.null(miss.p$MAR) & !is.null(miss.p$MAR$probability.midpoint) ){
-        if((!is.numeric(miss.p$MAR$probability.midpoint[1]) | miss.p$MAR$probability.midpoint[1] < 0) | miss.p$MAR$probability.midpoint[1] > 1){
-          stop("MAR$probability.midpoint[1] is not a numeric between 0 and 1.")
+        if(( !is.null(miss.p$MNAR$size) )  & (miss.p$MNAR$size != round(miss.p$MNAR$size)) ){
+          stop("MNAR$size is not an integer")
         }
-      }
-      if(!is.null(miss.p$MAR) & !is.null(miss.p$MAR$probability.midpoint)){
-        if((!is.numeric(miss.p$MAR$probability.midpoint[2]) |miss.p$MAR$probability.midpoint[2] < 0) | miss.p$MAR$probability.midpoint[2] > 1){
-          stop("MAR$probability.midpoint[2] is not a numeric between 0 and 1.")
+        if( !is.null(miss.p$MNAR$probability.upper)){
+          if((!is.numeric(miss.p$MNAR$probability.upper) |miss.p$MNAR$probability.upper < 0) | miss.p$MNAR$probability.upper > 1){
+            stop("MNAR$probability.upper is not a numeric between 0 and 1.")
+          }
         }
-      }
-      if((!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$columns) )  & !is.vector(miss.p$MNAR$columns) ){
-        stop("MNAR$columns is not a vector.")
-      }
-      if((!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$size) )  & (miss.p$MNAR$size != round(miss.p$MNAR$size)) ){
-        stop("MNAR$size is not an integer")
-      }
-      if(!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$probability.upper)){
-        if((!is.numeric(miss.p$MNAR$probability.upper) |miss.p$MNAR$probability.upper < 0) | miss.p$MNAR$probability.upper > 1){
-          stop("MNAR$probability.upper is not a numeric between 0 and 1.")
+        if( !is.null(miss.p$MNAR$probability.lower)){
+          if((!is.numeric(miss.p$MNAR$probability.lower) | miss.p$MNAR$probability.lower < 0) | miss.p$MNAR$probability.lower > 1){
+            stop("MNAR$probability.lower is not a numeric between 0 and 1.")
+          }
         }
-      }
-      if(!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$probability.lower)){
-        if((!is.numeric(miss.p$MNAR$probability.lower) | miss.p$MNAR$probability.lower < 0) | miss.p$MNAR$probability.lower > 1){
-          stop("MNAR$probability.lower is not a numeric between 0 and 1.")
+        if( !is.null(miss.p$MNAR$probability.midpoint) ) {
+          if((!is.numeric(miss.p$MNAR$probability.midpoint[1]) | miss.p$MNAR$probability.midpoint[1] < 0) | miss.p$MNAR$probability.midpoint[1] > 1){
+            stop("MNAR$probability.midpoint[1] is not a numeric between 0 and 1.")
+          }
         }
-      }
-      if(!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$probability.midpoint) ) {
-        if((!is.numeric(miss.p$MNAR$probability.midpoint[1]) | miss.p$MNAR$probability.midpoint[1] < 0) | miss.p$MNAR$probability.midpoint[1] > 1){
-          stop("MNAR$probability.midpoint[1] is not a numeric between 0 and 1.")
-        }
-      }
-      if(!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$probability.midpoint)){
-        if((!is.numeric(miss.p$MNAR$probability.midpoint[2]) | miss.p$MNAR$probability.midpoint[2] < 0) | miss.p$MNAR$probability.midpoint[2] > 1){
-          stop("MNAR$probability.midpoint[2] is not a numeric between 0 and 1.")
+        if( !is.null(miss.p$MNAR$probability.midpoint)){
+          if((!is.numeric(miss.p$MNAR$probability.midpoint[2]) | miss.p$MNAR$probability.midpoint[2] < 0) | miss.p$MNAR$probability.midpoint[2] > 1){
+            stop("MNAR$probability.midpoint[2] is not a numeric between 0 and 1.")
+          }
         }
       }
     }
@@ -535,7 +542,7 @@ simulation_ImputeBench = function(methods = NULL,
                                                     nl.limits = c(10,30),
                                                     nl.freq = c(10,20,15,1),
                                                     sp.points = 5,
-                                                    incl.groups = 0),
+                                                    incl.group = 0),
                                   data.non.linearity = 0,
                                   data.spars    = 0.4,
                                   data.low.dim  = 5,
@@ -801,6 +808,7 @@ simulation_ImputeBench = function(methods = NULL,
     if(!is.null(seed)){
       seed = seed + (tau*10000)
     }
+
     Results = varying_simulation_study_oneRun(methods = methods,
                                               method.names = method.names,
                                               training = training,

@@ -10,6 +10,7 @@
 #' @param type A character string. In the case two discrete variables are selected via `clms`, choose between `"scatter"` and
 #' `"tile"`. Default is `"scatter"`.
 #' @param jitter A positive numeric controlling the jitter on the discrete values. Default is `0.4`.
+#' @param text_size Numeric or NULL controlling the text label size in tile plots. Default is `NULL`.
 #' @param alpha A positive numeric controlling the transparency of the points. Default is `0.25`.
 #'
 #' @details Plotting the data distribution of selected columns in `clms` of `data`.
@@ -33,6 +34,7 @@ plot_2D_data = function(data,
                         clms = c(1,2),
                         alpha = 0.25,
                         jitter = 0.4,
+                        text_size = NULL,
                         type = "scatter", # "tile"
                         title = NULL){
   if(length(clms) != 2){
@@ -46,6 +48,7 @@ plot_2D_data = function(data,
                                     clms = clms,
                                     mask = NULL,
                                     error.groups = NULL,
+                                    text_size = text_size,
                                     title = title,
                                     first.clms.entry.missing = FALSE,
                                     only.first.mask.missingness = FALSE,
@@ -62,7 +65,8 @@ plot_2D_data = function(data,
     if("tile" %in% names(plots)){
       plot = plots$tile
     } else{
-      stop("Type tile can only be used for two discrete variables")
+      stop("Type tile can only be used for two discrete variables. Maybe your discrete variable(s)
+           has more than 30 unique values.")
     }
   }
 

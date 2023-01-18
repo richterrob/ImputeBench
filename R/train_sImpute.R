@@ -17,8 +17,8 @@
 #' @export
 #'
 
-train_sImpute = function(data){
 
+train_sImpute = function(data){
   # Hard-coded parameters:
 
   maximal.lambda = 100*(base::min(base::ncol(data),base::nrow(data)))
@@ -38,7 +38,6 @@ train_sImpute = function(data){
   binary.columns = cblist$binary.columns
   # Preparing the lambda vector
   each.trained.lambda = base::rep(c(100), repetitions)
-  starting.values = c(minimal.lambda, maximal.lambda)
   # We need to initialize an MCAR base scenario
   missingness.scenario = missingness_scenario_from_parameters(nbr_columns = ncol(data),
                                                               missingness_parameters = list("MCAR" = list(columns = 1:ncol(data),
@@ -46,7 +45,10 @@ train_sImpute = function(data){
                                                                                                           probability = 0.2)))
   for(t in 1:repetitions){
     # t = 1
+    # print(t)
     # We need to simulate an additional mask
+    discard = FALSE
+    starting.values = c(minimal.lambda, maximal.lambda)
     new.mask = simulate_mask(data = data,
                              scenario = missingness.scenario)
     # And impose this mask on the data
@@ -55,7 +57,12 @@ train_sImpute = function(data){
       masked.data[base::which(new.mask[,clmn] == 0),clmn] = NA
     }
     for(dep in 1:bisection.depth){
+      # print(dep)
       # dep = 1
+      # st.pts = seq(from = log(0.01), to = log(1000), length.out = 10)
+      # eval.pts = exp(st.pts)
+      # evaluation.points = exp(st.pts)
+      # starting.values = c(0.01,1000)
       log.evaluation.points = seq(from = log(starting.values[1]),
                                   to = log(starting.values[2]),
                                   length.out = bisection.partition)
@@ -96,23 +103,34 @@ train_sImpute = function(data){
         counter = counter + 1
       }
       # bisection
-      middle = base::which(bisection == base::min(bisection))
+      middle = base::which(bisection == base::min(bisection, na.rm = TRUE))
+      if(length(middle) == 0){
+        middle = bisection.partition/2
+        discard = TRUE
+      }
       # If middle is a vector, we take the first
       middle = middle[1]
+      #print(c(starting.values[1],starting.values[2]))
       # Now we need to update the starting values
       starting.values[1] = evaluation.points[base::max(middle-1,1)]
       starting.values[2] = evaluation.points[base::min(middle+1,bisection.partition)]
+      #print(c(starting.values[1],starting.values[2]))
+
     }
-    each.trained.lambda[t] = evaluation.points[middle]
+    if(base::min(bisection, na.rm = TRUE) == 100){
+      each.trained.lambda[t] = NA
+    } else{
+      if(discard){
+        each.trained.lambda[t] = NA
+      } else{
+        each.trained.lambda[t] = evaluation.points[middle]
+      }
+    }
   }
-  # evaluation.points
-  # If training never worked:
-  if(base::min(bisection) == 100){
+  trained.lambda = median(each.trained.lambda, na.rm = TRUE)
+  if(is.na(trained.lambda)){
     trained.lambda = default.lambda
     warning("soft Impute was not trained properly, due to error or time out.")
-  } else{
-    # Otherwise:
-    trained.lambda = median(each.trained.lambda)
   }
   args = list(lambda = trained.lambda,
               rank.max = rank.max,

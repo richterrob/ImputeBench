@@ -14,6 +14,8 @@
 #'
 #' @return A numeric matrix without missing entries
 #'
+#' @export
+#'
 
 wmissF = function(data,
                   args = list(ntree = 100)){

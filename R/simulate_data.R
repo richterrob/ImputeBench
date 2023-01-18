@@ -55,7 +55,6 @@
 #'
 
 
-
 simulate_data = function(data_parameters = list(data.size = 100,
                                                 data.type = c(5,5,5,5,5,5),
                                                 data.shape = list(gauss.mean = c(0,1),
@@ -250,20 +249,27 @@ simulate_data = function(data_parameters = list(data.size = 100,
     if(q == 1){
       Precision.matrix = 1
     } else{
-      Precision.matrix = genscore::cov_cons(mode  = "er",
-                                            p     = q,
-                                            spars = sparsity,
-                                            eig   = 0.1)  ### What is eig?!
+      if(sparsity == 0){
+        Precision.matrix = diag(x = 1, nrow = q, ncol = q)
+      } else{
+        Precision.matrix = genscore::cov_cons(mode  = "er",
+                                              p     = q,
+                                              spars = sparsity,
+                                              eig   = 0.1)
+      }
     }
-    # Now we can and should draw the latent Gaussians
+    # Now we can draw the latent Gaussians
     if(q == 1){
-      Latent.Gaussians = base::as.matrix(stats::rnorm(n = group_lw, mean = stats::rnorm(n = 1, mean = 0, sd = 1), sd = Precision.matrix),
+      Latent.Gaussians = base::as.matrix(stats::rnorm(n = group_lw, mean = stats::rnorm(n = 1,
+                                                                                        mean = 0,
+                                                                                        sd = 1),
+                                                      sd = Precision.matrix),
                                          nrow = group_lw,
                                          ncol = 1)
     } else{
       Latent.Gaussians = mvtnorm::rmvnorm(group_lw,
                                           mean = mu,
-                                          sigma = base::solve(Precision.matrix) ) # Is base here right?
+                                          sigma = base::solve(Precision.matrix))
     }
     # Now we need to draw a projection matrix and send our data through it (Note, it also goes through it if q = p)
     proj = base::sample(c(-1,1),
@@ -275,14 +281,18 @@ simulate_data = function(data_parameters = list(data.size = 100,
                             mean = low.dim.parameters_trunc[3],
                             sd   = low.dim.parameters_trunc[4])
     Proj = base::matrix(proj, ncol = P, nrow = q)
-    error.mtx = base::matrix(stats::rnorm(n = P * group_lw, mean = 0, sd = low.dim.parameters_error),
+    error.mtx = base::matrix(stats::rnorm(n = P * group_lw, mean = 0,
+                                          sd = low.dim.parameters_error),
                              nrow = group_lw, ncol = P)
-    proj.mean = base::matrix(rep(stats::rnorm(n = P, mean = 0, sd = p.mean), each = group_lw), nrow = group_lw)
+    proj.mean = base::matrix(rep(stats::rnorm(n = P, mean = 0, sd = p.mean), each = group_lw),
+                             nrow = group_lw)
     Raw.Gaussians = (Latent.Gaussians %*% Proj) + error.mtx + proj.mean
     # We want to add some non-linearity via the non.linearity parameter
     if(non.linearity != 0){
+      proj_error = stats::rnorm(n = group_lw, mean = 0, sd = low.dim.parameters_error)
       core = matrixStats::colMedians(Raw.Gaussians)
-      dists = base::apply(X = Raw.Gaussians, 1, base::norm, type = "2")
+      dists = base::apply(X = Raw.Gaussians, 1,
+                          FUN = function(x) {base::norm(x - core, type = "2")})
       max.allongation = base::max(dists)
       radius = non.linearity * max.allongation
       for(nu in 1:base::nrow(Raw.Gaussians)){
@@ -290,9 +300,11 @@ simulate_data = function(data_parameters = list(data.size = 100,
         distance = base::norm(difference, type = "2")
         if(distance < radius){
           if(distance == 0){
-            Raw.Gaussians[nu,] = core + radius*(core/(base::norm(core, type = "2") + epsilon))
+            Raw.Gaussians[nu,] = core + (radius+proj_error[nu])*
+              (core/(base::norm(core, type = "2") + epsilon))
           } else{
-            Raw.Gaussians[nu,] = core + (radius/distance)*difference
+            radius
+            Raw.Gaussians[nu,] = core + ((radius + proj_error[nu])/distance)*difference
           }
         }
       }
@@ -304,7 +316,10 @@ simulate_data = function(data_parameters = list(data.size = 100,
       Full.Raw.Gaussians = rbind(Full.Raw.Gaussians, Raw.Gaussians)
     }
   }
-  shuffle.rows = base::sample(1:(group_lw*low.dim.groups), size = (group_lw*low.dim.groups), replace = FALSE)
+  N = group_lw*low.dim.groups
+  shuffle.rows = base::sample(1:(group_lw*low.dim.groups),
+                              size = (group_lw*low.dim.groups),
+                              replace = FALSE)
   Full.Raw.Gaussians = Full.Raw.Gaussians[shuffle.rows,]
   # Let us scale the raw data as to easily dictate the parameters of the distributions
   Full.Raw.Gaussians = base::scale(Full.Raw.Gaussians)
@@ -323,8 +338,8 @@ simulate_data = function(data_parameters = list(data.size = 100,
     gauss.mu = stats::rnorm( p[1],
                              mean = param_gauss_mean[1],
                              sd = param_gauss_mean[2])
-    Final.Gaussians = base::sqrt(base::matrix(base::rep(gauss.sigma, each = N), nrow = N, ncol = p[1])) *
-      (Final.Gaussians + base::matrix(base::rep(gauss.mu, each = N), nrow = N, ncol = p[1]))
+    Final.Gaussians = (base::sqrt(base::matrix(base::rep(gauss.sigma, each = N), nrow = N, ncol = p[1])) * Final.Gaussians) +
+      base::matrix(base::rep(gauss.mu, each = N), nrow = N, ncol = p[1])
   } else{
     Final.Gaussians = NULL
   }
@@ -448,29 +463,38 @@ simulate_data = function(data_parameters = list(data.size = 100,
 
   # Preparing the mode shift
   if(param_modes != 1){
-    mode_indicator = extraDistr::qdunif( p = stats::pnorm( base::scale(
-      base::as.matrix(Full.Raw.Gaussians[,P])),
-      mean = 0,
-      sd = 1),
-      min = 1,
-      max = param_modes)
-    column.iqrs = matrixStats::colIQRs(Final.Data)
-    for(cc in   c((1:p[1]),((p[1]+p[2]+p[3]+p[4]):(P-1)))){
-      col.iqr = column.iqrs[cc]
-      ran.fct = sample(x = c(-1,1),size = param_modes, replace = TRUE) * runif(n = param_modes, min = group_min_max[1], max = group_min_max[2])
-      for(mode in 1:param_modes){
-        if(length(which(mode_indicator == mode)) != 0){
-          Final.Data[which(mode_indicator == mode),cc] =
-            Final.Data[which(mode_indicator == mode),cc] + ran.fct[mode] * col.iqr
+    if((p[1]+p[4]+p[5]+p[6]) != 0){
+      mode_indicator = extraDistr::qdunif( p = stats::pnorm( base::scale(
+        base::as.matrix(Full.Raw.Gaussians[,P])),
+        mean = 0,
+        sd = 1),
+        min = 1,
+        max = param_modes)
+      column.iqrs = matrixStats::colIQRs(Final.Data)
+      if(p[1] == 0){
+        cont.clms = (p[1]+p[2]+p[3]+1):(P-1)
+      } else{
+        if((p[4]+p[5]+p[6]) == 0){
+          cont.clms = 1:p[1]
+        } else{
+          cont.clms = c((1:p[1]),((p[1]+p[2]+p[3]+1):(P-1)))
         }
+      }
+      for(cc in cont.clms){
+        col.iqr = column.iqrs[cc]
+        ran.fct = sample(x = c(-1,1),size = param_modes, replace = TRUE) * runif(n = param_modes, min = group_min_max[1], max = group_min_max[2])
+        for(mode in 1:param_modes){
+          if(length(which(mode_indicator == mode)) != 0){
+            Final.Data[which(mode_indicator == mode),cc] =
+              Final.Data[which(mode_indicator == mode),cc] + ran.fct[mode] * col.iqr
+          }
+        }
+      }
+      if(param_modes_include == 1){
+        Final.Data = cbind(Final.Data, mode_indicator)
       }
     }
   }
-  if(param_modes_include == 1){
-    Final.Data = cbind(Final.Data, mode_indicator)
-  }
-
-  # Now we need to add modes
 
 
 
@@ -478,14 +502,6 @@ simulate_data = function(data_parameters = list(data.size = 100,
 }
 
 
-
-##########################################################
-###############   create count variables #################
-# based on approach suggested in 'Nonparametric Graphical Model for Counts', Roy and Dunson, 2019,
-# Journal of Machine Learning Research
-# 1.X (pois*N)xp  MVN(0p,Omega^(-1)pxp) with Omega being sparse precision matrix
-# 2.calculate Pij= c(xij), where c is the cumulative density function of the standard normal
-# 3.Yij=QP(Pij,lambda) for a given mean parameter lambda with QP the quantile function of Poisson(lambda) is then Poisson distributed
 
 
 

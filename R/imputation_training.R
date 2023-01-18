@@ -26,6 +26,7 @@ imputation_training = function(masked.data,
     training[[nbr.methods + 1]] = "End"
   }
   for(t in 1:nbr.methods){
+    # t = 5
     if(base::is.null(training[[t]])){
       methods_parameters[[t]] = NULL
     } else{

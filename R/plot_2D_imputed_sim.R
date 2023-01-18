@@ -17,6 +17,7 @@
 #' @param alpha A positive numeric controlling the transparency of the observed data points. Default is `0.25`.
 #' @param alpha_line A postive numeric controlling the transparency of the lines connecting missing and imputed values.
 #' Default is `1`.
+#' @param text_size Numeric or NULL controlling the text label size in tile plots. Default is `NULL`.
 #'
 #' @details Plotting the imputed vs. the missing values in `clms` of `data` including where of interest the observed entries.
 #'
@@ -44,6 +45,7 @@ plot_2D_imputed_sim = function(data,
                                alpha = 0.25,
                                jitter = 0.4,
                                alpha_line = 1,
+                               text_size = NULL,
                                clms = c(1,2),
                                type = "scatter", # "tile"
                                title = NULL){
@@ -60,6 +62,7 @@ plot_2D_imputed_sim = function(data,
                                     first.clms.entry.missing = TRUE,
                                     only.first.mask.missingness = FALSE,
                                     jitter = jitter,
+                                    text_size = text_size,
                                     alpha_line = alpha_line,
                                     title = title,
                                     alpha_set = alpha)

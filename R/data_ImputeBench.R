@@ -275,69 +275,75 @@ data_ImputeBench = function(data,
     ln = length(scenarios)
     for(t in 1:ln){
       scenario = scenarios[[t]]
-      if(!is.null(scenario$MCAR) & !is.null(scenario$MCAR$columns) & !is.vector(scenario$MCAR$columns)){
-        stop("MCAR$columns is not a vector.")
-      }
-      if(!is.null(scenario$MCAR) & !is.null(scenario$MCAR$probability)){
-        if(( !is.vector(scenario$MCAR$probability) | min(scenario$MCAR$probability) < 0 )| max(scenario$MCAR$probability) > 1 ){
-          stop("MCAR$probability is not a numeric vector with entries between 0 and 1.")
+      if(!is.null(scenario$MCAR)){
+        if( !is.null(scenario$MCAR$columns) & !is.vector(scenario$MCAR$columns)){
+          stop("MCAR$columns is not a vector.")
+        }
+        if( !is.null(scenario$MCAR$probability)){
+          if(( !is.vector(scenario$MCAR$probability) | min(scenario$MCAR$probability) < 0 )| max(scenario$MCAR$probability) > 1 ){
+            stop("MCAR$probability is not a numeric vector with entries between 0 and 1.")
+          }
         }
       }
-      if(!is.null(scenario$MAR) & !is.null(scenario$MAR$probability.upper)){
-        if(( !is.vector(scenario$MAR$probability.upper) | min(scenario$MAR$probability.upper) < 0 )| max(scenario$MAR$probability.upper) > 1 ){
-          stop("MAR$probability.upper is not a vector with entries between 0 and 1.")
+      if(!is.null(scenario$MAR)){
+        if( !is.null(scenario$MAR$probability.upper)){
+          if(( !is.vector(scenario$MAR$probability.upper) | min(scenario$MAR$probability.upper) < 0 )| max(scenario$MAR$probability.upper) > 1 ){
+            stop("MAR$probability.upper is not a vector with entries between 0 and 1.")
+          }
+        }
+        if( !is.null(scenario$MAR$probability.lower) ){
+          if(( !is.vector(scenario$MAR$probability.lower) |  min(scenario$MAR$probability.lower) < 0 )| max(scenario$MAR$probability.lower) > 1 ){
+            stop("MAR$probability.lower is not a vector with entries between 0 and 1.")
+          }
+        }
+        if(!is.null(scenario$MAR$probability.midpoint) &  !is.list(scenario$MAR$probability.midpoint)){ # I do not check each list entry
+          stop("MAR$probability.midpoint is not a list.")
+        }
+        if(!is.null(scenario$MAR$reg.columns) &  !is.list(scenario$MAR$reg.columns)){ # I do not check each list entry
+          stop("MAR$reg.columns is not a list.")
+        }
+        if((( !is.null(scenario$MAR$reg.columns)) & !is.null(scenario$MAR$probability.upper)) & (length(scenario$MAR$reg.columns) !=
+                                                                                                 length(scenario$MAR$probability.upper))){
+          stop("MAR$reg.columns must have the same length as MAR$probability.upper")
+        }
+        if((( !is.null(scenario$MAR$probability.upper)) & !is.null(scenario$MAR$probability.lower)) & (length(scenario$MAR$probability.upper) !=
+                                                                                                       length(scenario$MAR$probability.lower))){
+          stop("MAR$probability.upper must have the same length as MAR$probability.lower")
+        }
+        if((( !is.null(scenario$MAR$probability.midpoint)) & !is.null(scenario$MAR$probability.lower)) & (length(scenario$MAR$probability.midpoint) !=
+                                                                                                          length(scenario$MAR$probability.lower))){
+          stop("MAR$probability.midpoint must have the same length as MAR$probability.lower")
         }
       }
-      if(!is.null(scenario$MAR) & !is.null(scenario$MAR$probability.lower) ){
-        if(( !is.vector(scenario$MAR$probability.lower) |  min(scenario$MAR$probability.lower) < 0 )| max(scenario$MAR$probability.lower) > 1 ){
-          stop("MAR$probability.lower is not a vector with entries between 0 and 1.")
+      if(!is.null(scenario$MNAR)){
+        if( !is.null(scenario$MNAR$probability.upper) ){
+          if(( !is.vector(scenario$MNAR$probability.upper) | min(scenario$MNAR$probability.upper) < 0 )| max(scenario$MNAR$probability.upper) > 1 ){
+            stop("MNAR$probability.upper is not a vector with entries between 0 and 1.")
+          }
         }
-      }
-      if(!is.null(scenario$MAR) & !is.null(scenario$MAR$probability.midpoint) &  !is.list(scenario$MAR$probability.midpoint)){ # I do not check each list entry
-        stop("MAR$probability.midpoint is not a list.")
-      }
-      if(!is.null(scenario$MNAR) & !is.null(scenario$MNAR$probability.upper) ){
-        if(( !is.vector(scenario$MNAR$probability.upper) | min(scenario$MNAR$probability.upper) < 0 )| max(scenario$MNAR$probability.upper) > 1 ){
-          stop("MNAR$probability.upper is not a vector with entries between 0 and 1.")
+        if( !is.null(scenario$MNAR$probability.lower)){
+          if(( !is.vector(scenario$MNAR$probability.lower) | min(scenario$MNAR$probability.lower) < 0 )| max(scenario$MNAR$probability.lower) > 1 ){
+            stop("MNAR$probability.lower is not a vector with entries between 0 and 1.")
+          }
         }
-      }
-      if(!is.null(scenario$MNAR) & !is.null(scenario$MNAR$probability.lower)){
-        if(( !is.vector(scenario$MNAR$probability.lower) | min(scenario$MNAR$probability.lower) < 0 )| max(scenario$MNAR$probability.lower) > 1 ){
-          stop("MNAR$probability.lower is not a vector with entries between 0 and 1.")
+        if( !is.null(scenario$MNAR$probability.midpoint) &  !is.list(scenario$MNAR$probability.midpoint)){ # I do not check each list entry
+          stop("MNAR$probability.midpoint is not a list.")
         }
-      }
-      if(!is.null(scenario$MNAR) & !is.null(scenario$MNAR$probability.midpoint) &  !is.list(scenario$MNAR$probability.midpoint)){ # I do not check each list entry
-        stop("MNAR$probability.midpoint is not a list.")
-      }
-      if(!is.null(scenario$MAR) & !is.null(scenario$MAR$reg.columns) &  !is.list(scenario$MAR$reg.columns)){ # I do not check each list entry
-        stop("MAR$reg.columns is not a list.")
-      }
-      if(((!is.null(scenario$MAR) & !is.null(scenario$MAR$reg.columns)) & !is.null(scenario$MAR$probability.upper)) & (length(scenario$MAR$reg.columns) !=
-                                                                                                                       length(scenario$MAR$probability.upper))){
-        stop("MAR$reg.columns must have the same length as MAR$probability.upper")
-      }
-      if(((!is.null(scenario$MAR) & !is.null(scenario$MAR$probability.upper)) & !is.null(scenario$MAR$probability.lower)) & (length(scenario$MAR$probability.upper) !=
-                                                                                                                             length(scenario$MAR$probability.lower))){
-        stop("MAR$probability.upper must have the same length as MAR$probability.lower")
-      }
-      if(((!is.null(scenario$MAR) & !is.null(scenario$MAR$probability.midpoint)) & !is.null(scenario$MAR$probability.lower)) & (length(scenario$MAR$probability.midpoint) !=
-                                                                                                                                length(scenario$MAR$probability.lower))){
-        stop("MAR$probability.midpoint must have the same length as MAR$probability.lower")
-      }
-      if(((!is.null(scenario$MNAR) & !is.null(scenario$MNAR$probability.upper)) & !is.null(scenario$MNAR$columns)) & (length(scenario$MNAR$probability.upper) !=
-                                                                                                                      length(scenario$MNAR$columns))){
-        stop("MNAR$probability.upper must have the same length as MNAR$columns")
-      }
-      if(((!is.null(scenario$MNAR) & !is.null(scenario$MNAR$probability.upper)) & !is.null(scenario$MNAR$probability.lower)) & (length(scenario$MNAR$probability.upper) !=
-                                                                                                                                length(scenario$MNAR$probability.lower))){
-        stop("MNAR$probability.upper must have the same length as MNAR$probability.lower")
-      }
-      if(((!is.null(scenario$MNAR) & !is.null(scenario$MNAR$probability.midpoint)) & !is.null(scenario$MNAR$probability.lower)) & (length(scenario$MNAR$probability.midpoint) !=
-                                                                                                                                   length(scenario$MNAR$probability.lower))){
-        stop("MNAR$probability.midpoint must have the same length as MNAR$probability.lower")
+        if((( !is.null(scenario$MNAR$probability.upper)) & !is.null(scenario$MNAR$columns)) & (length(scenario$MNAR$probability.upper) !=
+                                                                                               length(scenario$MNAR$columns))){
+          stop("MNAR$probability.upper must have the same length as MNAR$columns")
+        }
+        if(((!is.null(scenario$MNAR$probability.upper)) & !is.null(scenario$MNAR$probability.lower)) & (length(scenario$MNAR$probability.upper) !=
+                                                                                                        length(scenario$MNAR$probability.lower))){
+          stop("MNAR$probability.upper must have the same length as MNAR$probability.lower")
+        }
+        if((( !is.null(scenario$MNAR$probability.midpoint)) & !is.null(scenario$MNAR$probability.lower)) & (length(scenario$MNAR$probability.midpoint) !=
+                                                                                                            length(scenario$MNAR$probability.lower))){
+          stop("MNAR$probability.midpoint must have the same length as MNAR$probability.lower")
+        }
       }
     }
-  } else{if(!is.null(missingness_parameters)){
+  } else if(!is.null(missingness_parameters)){
 
     # Check for not used entries
     for(t in 1:length(missingness_parameters)){
@@ -371,80 +377,85 @@ data_ImputeBench = function(data,
     for(k in 1:length(missingness_parameters)){
       # k = 1
       miss.p = missingness_parameters[[k]]
-      if((!is.null(miss.p$MCAR) & !is.null(miss.p$MCAR$columns) )  & !is.vector(miss.p$MCAR$columns) ){
-        stop("MCAR$columns is not a vector.")
-      }
-      if((!is.null(miss.p$MCAR) & !is.null(miss.p$MCAR$size) ) ){
-        if(!(round(miss.p$MCAR$size) == miss.p$MCAR$size) ){
-          stop("MCAR$size is not an integer")
+      if(!is.null(miss.p$MCAR)){
+        if(( !is.null(miss.p$MCAR$columns) )  & !is.vector(miss.p$MCAR$columns) ){
+          stop("MCAR$columns is not a vector.")
+        }
+        if(( !is.null(miss.p$MCAR$size) ) ){
+          if(!(round(miss.p$MCAR$size) == miss.p$MCAR$size) ){
+            stop("MCAR$size is not an integer")
+          }
+        }
+        if( !is.null(miss.p$MCAR$probability)){
+          if((!is.numeric(miss.p$MCAR$probability) |miss.p$MCAR$probability < 0) | miss.p$MCAR$probability > 1){
+            stop("MCAR$probability is not a numeric between 0 and 1.")
+          }
         }
       }
-      if(!is.null(miss.p$MCAR) & !is.null(miss.p$MCAR$probability)){
-        if((!is.numeric(miss.p$MCAR$probability) |miss.p$MCAR$probability < 0) | miss.p$MCAR$probability > 1){
-          stop("MCAR$probability is not a numeric between 0 and 1.")
+      if(!is.null(miss.p$MAR)){
+        if(( !is.null(miss.p$MAR$columns) )  & !is.vector(miss.p$MAR$columns) ){
+          stop("MAR$columns is not a vector.")
+        }
+        if(( !is.null(miss.p$MAR$size.regressors) )  & !is.vector(miss.p$MAR$size.regressors) ){
+          stop("MAR$size.regressors is not a vector.")
+        }
+        if( !is.null(miss.p$MAR$size) ){
+          if(!(round(miss.p$MAR$size) == miss.p$MAR$size) ){
+            stop("MAR$size is not an integer")
+          }
+        }
+        if( !is.null(miss.p$MAR$probability.upper) ){
+          if( ((!is.numeric(miss.p$MAR$probability.upper) | miss.p$MAR$probability.upper < 0) | miss.p$MAR$probability.upper > 1)){
+            stop("MAR$probability.upper is not a numeric between 0 and 1.")
+          }
+        }
+        if( !is.null(miss.p$MAR$probability.lower) ){
+          if((!is.numeric(miss.p$MAR$probability.lower) |  miss.p$MAR$probability.lower < 0) | miss.p$MAR$probability.lower > 1){
+            stop("MAR$probability.lower is not a numeric between 0 and 1.")
+          }
+        }
+        if( !is.null(miss.p$MAR$probability.midpoint) ){
+          if((!is.numeric(miss.p$MAR$probability.midpoint[1]) | miss.p$MAR$probability.midpoint[1] < 0) | miss.p$MAR$probability.midpoint[1] > 1){
+            stop("MAR$probability.midpoint[1] is not a numeric between 0 and 1.")
+          }
+        }
+        if(!is.null(miss.p$MAR$probability.midpoint)){
+          if((!is.numeric(miss.p$MAR$probability.midpoint[2]) |miss.p$MAR$probability.midpoint[2] < 0) | miss.p$MAR$probability.midpoint[2] > 1){
+            stop("MAR$probability.midpoint[2] is not a numeric between 0 and 1.")
+          }
         }
       }
-      if((!is.null(miss.p$MAR) & !is.null(miss.p$MAR$columns) )  & !is.vector(miss.p$MAR$columns) ){
-        stop("MAR$columns is not a vector.")
-      }
-      if((!is.null(miss.p$MAR) & !is.null(miss.p$MAR$size.regressors) )  & !is.vector(miss.p$MAR$size.regressors) ){
-        stop("MAR$size.regressors is not a vector.")
-      }
-      if(!is.null(miss.p$MAR) & !is.null(miss.p$MAR$size) ){
-        if(!(round(miss.p$MAR$size) == miss.p$MAR$size) ){
-          stop("MAR$size is not an integer")
+      if(!is.null(miss.p$MNAR)){
+        if(( !is.null(miss.p$MNAR$columns) )  & !is.vector(miss.p$MNAR$columns) ){
+          stop("MNAR$columns is not a vector.")
         }
-      }
-      if(!is.null(miss.p$MAR) & !is.null(miss.p$MAR$probability.upper) ){
-        if( ((!is.numeric(miss.p$MAR$probability.upper) | miss.p$MAR$probability.upper < 0) | miss.p$MAR$probability.upper > 1)){
-          stop("MAR$probability.upper is not a numeric between 0 and 1.")
+        if( !is.null(miss.p$MNAR$size) ){
+          if( !(round(miss.p$MNAR$size) == miss.p$MNAR$size) ){
+            stop("MNAR$size is not an integer")
+          }
         }
-      }
-      if(!is.null(miss.p$MAR) & !is.null(miss.p$MAR$probability.lower) ){
-        if((!is.numeric(miss.p$MAR$probability.lower) |  miss.p$MAR$probability.lower < 0) | miss.p$MAR$probability.lower > 1){
-          stop("MAR$probability.lower is not a numeric between 0 and 1.")
+        if( !is.null(miss.p$MNAR$probability.upper)){
+          if((!is.numeric(miss.p$MNAR$probability.upper) |miss.p$MNAR$probability.upper < 0) | miss.p$MNAR$probability.upper > 1){
+            stop("MNAR$probability.upper is not a numeric between 0 and 1.")
+          }
         }
-      }
-      if(!is.null(miss.p$MAR) & !is.null(miss.p$MAR$probability.midpoint) ){
-        if((!is.numeric(miss.p$MAR$probability.midpoint[1]) | miss.p$MAR$probability.midpoint[1] < 0) | miss.p$MAR$probability.midpoint[1] > 1){
-          stop("MAR$probability.midpoint[1] is not a numeric between 0 and 1.")
+        if( !is.null(miss.p$MNAR$probability.lower)){
+          if((!is.numeric(miss.p$MNAR$probability.lower) | miss.p$MNAR$probability.lower < 0) | miss.p$MNAR$probability.lower > 1){
+            stop("MNAR$probability.lower is not a numeric between 0 and 1.")
+          }
         }
-      }
-      if(!is.null(miss.p$MAR) & !is.null(miss.p$MAR$probability.midpoint)){
-        if((!is.numeric(miss.p$MAR$probability.midpoint[2]) |miss.p$MAR$probability.midpoint[2] < 0) | miss.p$MAR$probability.midpoint[2] > 1){
-          stop("MAR$probability.midpoint[2] is not a numeric between 0 and 1.")
+        if( !is.null(miss.p$MNAR$probability.midpoint) ) {
+          if((!is.numeric(miss.p$MNAR$probability.midpoint[1]) | miss.p$MNAR$probability.midpoint[1] < 0) | miss.p$MNAR$probability.midpoint[1] > 1){
+            stop("MNAR$probability.midpoint[1] is not a numeric between 0 and 1.")
+          }
         }
-      }
-      if((!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$columns) )  & !is.vector(miss.p$MNAR$columns) ){
-        stop("MNAR$columns is not a vector.")
-      }
-      if(!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$size) ){
-        if( !(round(miss.p$MNAR$size) == miss.p$MNAR$size) ){
-          stop("MNAR$size is not an integer")
-        }
-      }
-      if(!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$probability.upper)){
-        if((!is.numeric(miss.p$MNAR$probability.upper) |miss.p$MNAR$probability.upper < 0) | miss.p$MNAR$probability.upper > 1){
-          stop("MNAR$probability.upper is not a numeric between 0 and 1.")
-        }
-      }
-      if(!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$probability.lower)){
-        if((!is.numeric(miss.p$MNAR$probability.lower) | miss.p$MNAR$probability.lower < 0) | miss.p$MNAR$probability.lower > 1){
-          stop("MNAR$probability.lower is not a numeric between 0 and 1.")
-        }
-      }
-      if(!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$probability.midpoint) ) {
-        if((!is.numeric(miss.p$MNAR$probability.midpoint[1]) | miss.p$MNAR$probability.midpoint[1] < 0) | miss.p$MNAR$probability.midpoint[1] > 1){
-          stop("MNAR$probability.midpoint[1] is not a numeric between 0 and 1.")
-        }
-      }
-      if(!is.null(miss.p$MNAR) & !is.null(miss.p$MNAR$probability.midpoint)){
-        if((!is.numeric(miss.p$MNAR$probability.midpoint[2]) | miss.p$MNAR$probability.midpoint[2] < 0) | miss.p$MNAR$probability.midpoint[2] > 1){
-          stop("MNAR$probability.midpoint[2] is not a numeric between 0 and 1.")
+        if(!is.null(miss.p$MNAR$probability.midpoint)){
+          if((!is.numeric(miss.p$MNAR$probability.midpoint[2]) | miss.p$MNAR$probability.midpoint[2] < 0) | miss.p$MNAR$probability.midpoint[2] > 1){
+            stop("MNAR$probability.midpoint[2] is not a numeric between 0 and 1.")
+          }
         }
       }
     }
-  }
   }
 
   if(!base::is.null(methods)){
@@ -538,7 +549,7 @@ data_ImputeBench = function(data,
   training[[k]] = function(data){list(method = baseline_method)}
   method.names[k] = "Baseline"
 
-
+  only_miss_par_provided = FALSE
   if(is.null(scenarios)){
     if(is.null(missingness_parameters)){
 
@@ -548,31 +559,35 @@ data_ImputeBench = function(data,
                                                   size = ncol(data)/2,
                                                   probability = 0.25))
         scenarios = list("Default Scenario 1" = missingness_scenario_from_parameters(nbr_columns = ncol(data),
-                                                                             missingness_parameters = missingness_parameters,
-                                                                             seed = seed),
+                                                                                     missingness_parameters = missingness_parameters,
+                                                                                     seed = seed),
                          "Default Scenario 2" = missingness_scenario_from_parameters(nbr_columns = ncol(data),
-                                                                             missingness_parameters = missingness_parameters,
-                                                                             seed =     if(!is.null(seed)){seed + 10} else{seed}),
+                                                                                     missingness_parameters = missingness_parameters,
+                                                                                     seed =     if(!is.null(seed)){seed + 10} else{seed}),
                          "Default Scenario 3" = missingness_scenario_from_parameters(nbr_columns = ncol(data),
-                                                                             missingness_parameters = missingness_parameters,
-                                                                             seed =     if(!is.null(seed)){seed + 20} else{seed}),
+                                                                                     missingness_parameters = missingness_parameters,
+                                                                                     seed =     if(!is.null(seed)){seed + 20} else{seed}),
                          "Default Scenario 4" = missingness_scenario_from_parameters(nbr_columns = ncol(data),
-                                                                             missingness_parameters = missingness_parameters,
-                                                                             seed =     if(!is.null(seed)){seed + 30} else{NULL}))
+                                                                                     missingness_parameters = missingness_parameters,
+                                                                                     seed =     if(!is.null(seed)){seed + 30} else{NULL}))
       } else{
         clms.with.miss = which(exists.miss != 0)
         how.much.miss = exists.miss[clms.with.miss]/nrow(data)
         scenarios = list("Default Scenario" = list(MCAR = list( columns =  clms.with.miss,
-                                                          probability = how.much.miss)))
+                                                                probability = how.much.miss)))
       }
     } else{
+      only_miss_par_provided = TRUE
       names_of_choices = names(missingness_parameters)
       k = length(missingness_parameters)
       scenarios = list()
       for(t in 1:k){
-        scenarios[[t]] = missingness_scenario_from_parameters(nbr_columns = ncol(data),
-                                                              missingness_parameters = missingness_parameters[[t]],
-                                                              seed = if(!is.null(seed)){seed + 10*t} else{NULL})
+        scenarios[[t]] = list()
+        for(k in 1:repetitions){
+          scenarios[[t]][[k]] = missingness_scenario_from_parameters(nbr_columns = ncol(data),
+                                                                     missingness_parameters = missingness_parameters[[t]],
+                                                                     seed = if(!is.null(seed)){seed + 10*t} else{NULL})
+        }
         names(scenarios)[t] = names(missingness_parameters)[t]
       }
 
@@ -697,6 +712,7 @@ data_ImputeBench = function(data,
                                                scaling_robust = scaling_robust,
                                                retrain.always = retrain_always,
                                                verbose = verbose,
+                                               only_miss_par_provided = only_miss_par_provided,
                                                seed = seed,
                                                run.nbr = tau,
                                                max.time = max_time,
