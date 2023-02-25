@@ -16,6 +16,7 @@
 #' `additional.imputations` are passed. The first entry corresponds to `imputed_data` while the next entries correspond in their order
 #' to the list entries of `additional.imputations`. Default is `NULL`.
 #' @param jitter A positive numeric controlling the jitter. Default is `0.4`.
+#' @param text_size Numeric or NULL controlling the text label size in tile plots. Default is `NULL`.
 #' @param alpha A positive numeric controlling the transparency of the observed data points. Default is `0.25`.
 #'
 #' @details Plotting the imputed vs. the missing values in `clm` of `data` including where of interest the observed entries.
@@ -36,6 +37,7 @@ plot_1D_imputed_sim = function(data,
                                additional.imputations = NULL,
                                imp.names = NULL,
                                clm = 1,
+                               text_size = NULL,
                                alpha = 1,
                                jitter = 0.4,
                                title = NULL){
@@ -55,6 +57,7 @@ plot_1D_imputed_sim = function(data,
                                    imputed.data = imputed_data,
                                    error.groups = NULL,
                                    alpha_set = alpha,
+                                   text_size = text_size,
                                    multiple.imputations = additional.imputations,
                                    imp.names = imp.names,
                                    first.clms.entry.missing = TRUE,

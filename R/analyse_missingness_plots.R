@@ -63,7 +63,7 @@ analyse_missingness_plots = function(data,
   missboth = NULL;  impx = NULL;  imputed = NULL;  imputation = NULLvalueimp = NULL;  valuemiss = NULL;  valueimp = NULL
   impy = NULL;  valueimp = NULL;  grp = NULL; imp = NULL
 
-  count.levels = 30 # Maximum numver of values for "count columns"
+  count.levels = 30 # Maximum number of values for "count columns"
 
   data = as.data.frame(data)
 
@@ -1774,7 +1774,7 @@ analyse_missingness_plots = function(data,
                             y = paste0("Imputed Value of ", data.name[1])) +
               ggplot2::geom_tile(data = tile.df[(tile.df$diag == 1),], aes(color = as.factor(diag)), size = 1) +
               ggplot2::scale_color_manual(guide = "none", values = c('1' = "red")) +
-              ggplot2::geom_text(ggplot2::aes(label = value), size = 5, col = "white")
+              ggplot2::geom_text(ggplot2::aes(label = value), size = if(is.null(text_size)){5} else{text_size}, col = "white")
             #  d1.plot.imp
           }
         }

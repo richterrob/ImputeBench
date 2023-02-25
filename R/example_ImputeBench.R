@@ -60,24 +60,30 @@ example_ImputeBench = function(Evaluation, parameters = 1, run = 1, data = NULL,
     imputed_data = list()
 
     if("softImpute" %in% imputation_methods){
-      imputed_data$softImpute = wsImpute(data = miss.data,
-                                         args = args[[imputation_indices[which(imputation_methods == "softImpute")]]])
+      imputed_data$softImpute = round_imputation(data = miss.data,
+                                                 imputed_data = wsImpute(data = miss.data,
+                                                                         args = args[[imputation_indices[which(imputation_methods == "softImpute")]]]))
+
     }
     if("baseline" %in% imputation_methods){
-      imputed_data$median = baseline_imputation(data = miss.data,
-                                                args = args[[imputation_indices[which(imputation_methods == "baseline")]]])
+      imputed_data$median = round_imputation(data = miss.data,
+                                             imputed_data =  baseline_imputation(data = miss.data,
+                                                                                 args = args[[imputation_indices[which(imputation_methods == "baseline")]]]))
     }
     if("knn" %in% imputation_methods){
-      imputed_data$knn = wKNN(data = miss.data,
-                              args = args[[imputation_indices[which(imputation_methods == "knn")]]])
+      imputed_data$knn =  round_imputation(data = miss.data,
+                                           imputed_data = wKNN(data = miss.data,
+                                                               args = args[[imputation_indices[which(imputation_methods == "knn")]]]))
     }
     if("missF" %in% imputation_methods){
-      imputed_data$missF = wmissF(data = miss.data,
-                                  args = args[[imputation_indices[which(imputation_methods == "missF")]]])
+      imputed_data$missF =  round_imputation(data = miss.data,
+                                             imputed_data = wmissF(data = miss.data,
+                                                                   args = args[[imputation_indices[which(imputation_methods == "missF")]]]))
     }
     if("MICE" %in% imputation_methods){
-      imputed_data$MICE = wMICE(data = miss.data,
-                                args = args[[imputation_indices[which(imputation_methods == "MICE")]]])
+      imputed_data$MICE =  round_imputation(data = miss.data,
+                                            imputed_data = wMICE(data = miss.data,
+                                                                 args = args[[imputation_indices[which(imputation_methods == "MICE")]]]))
     }
   }
 

@@ -20,7 +20,7 @@ train_KNN = function(data){
 
   # Hard-coded parameters:
   maximal.knn = base::min(101, base::ncol(data))
-  repetitions = 5
+  repetitions = 10
   bisection.partition = 10
   bisection.depth = 2
   default.k = 5

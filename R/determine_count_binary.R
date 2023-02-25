@@ -16,8 +16,10 @@ determine_count_binary = function(data){
   p = base::ncol(data)
   n = base::nrow(data)
 
-  counts = ((data == round(data)) | is.na(data))
+  counts = (((data == round(data)) & (data >= 0)) | is.na(data))
   binaries = ((data %in% c(0,1)) | is.na(data))
+
+  View(binaries)
 
   count  = base::which(base::colSums(base::matrix(counts, ncol = p, nrow = n), na.rm = TRUE) == n)
   binary = base::which(base::colSums(base::matrix(binaries, ncol = p, nrow = n), na.rm = TRUE) == n)
