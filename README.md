@@ -1,7 +1,9 @@
 # ImputeBench
 
 Author: Robin Richter
+
 Institution: Deutsches Zentrum für Neurodegenerative Erkrankungen (DZNE) e.V.
+
 Licence: MIT Licence
 
 The ImputeBench package includes two functions to benchmark imputation methods either on provided, or, on simulated data. The benchmarking, data simulation
