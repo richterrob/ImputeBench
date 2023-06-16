@@ -6,6 +6,8 @@ Institution: Deutsches Zentrum für Neurodegenerative Erkrankungen (DZNE) e.V.
 
 Licence: MIT Licence
 
+Note: Please feel free to ask questions or report bugs.
+
 The ImputeBench package includes two functions to benchmark imputation methods either on provided, or, on simulated data. The benchmarking, data simulation
 and missingness pattern simulation protocols have been described in the accompanying paper 
 
